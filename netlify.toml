@@ -2,50 +2,82 @@
   publish = "."
   functions = "netlify/functions"
 
+# App routes
 [[redirects]]
   from = "/app"
   to = "/app/index.html"
   status = 200
+  force = true
 
 [[redirects]]
-  from = "/app/*"
+  from = "/app/"
   to = "/app/index.html"
   status = 200
+  force = true
 
+# Auth
 [[redirects]]
   from = "/auth"
   to = "/auth.html"
   status = 200
+  force = true
 
+[[redirects]]
+  from = "/auth/"
+  to = "/auth.html"
+  status = 200
+  force = true
+
+# Pricing
 [[redirects]]
   from = "/pricing"
   to = "/pricing.html"
   status = 200
+  force = true
 
+[[redirects]]
+  from = "/pricing/"
+  to = "/pricing.html"
+  status = 200
+  force = true
+
+# Legal pages
 [[redirects]]
   from = "/privacy"
   to = "/privacy.html"
   status = 200
+  force = true
 
 [[redirects]]
   from = "/terms"
   to = "/terms.html"
   status = 200
+  force = true
 
 [[redirects]]
   from = "/refund"
   to = "/refund.html"
   status = 200
+  force = true
 
+# Chat widget
 [[redirects]]
   from = "/chat"
   to = "/chat.html"
   status = 200
+  force = true
+
+[[redirects]]
+  from = "/chat/"
+  to = "/chat.html"
+  status = 200
+  force = true
 
 [[headers]]
   for = "/widget.js"
   [headers.values]
     Access-Control-Allow-Origin = "*"
+    Cache-Control = "public, max-age=0, must-revalidate"
 
 [[headers]]
   for = "/chat.html"
