@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Privacy Policy — NexBot</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#08080f;--surface:#111118;--border:#2a2a3a;--text:#f0f0ff;--muted:#8888aa;--accent:#7c6fff;--accent2:#ff6b8a}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;line-height:1.7}
+nav{padding:20px 40px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
+.logo{font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-decoration:none}
+.back{color:var(--muted);text-decoration:none;font-size:0.88rem;transition:color 0.2s}
+.back:hover{color:var(--text)}
+.container{max-width:740px;margin:0 auto;padding:60px 24px 100px}
+.page-tag{font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--accent);margin-bottom:12px}
+h1{font-family:'Syne',sans-serif;font-size:2.4rem;font-weight:800;letter-spacing:-1px;margin-bottom:8px}
+.updated{font-size:0.82rem;color:var(--muted);margin-bottom:48px}
+h2{font-family:'Syne',sans-serif;font-size:1.2rem;font-weight:700;margin:36px 0 12px;color:var(--text)}
+p{color:var(--muted);font-size:0.93rem;margin-bottom:14px}
+ul{color:var(--muted);font-size:0.93rem;padding-left:20px;margin-bottom:14px}
+ul li{margin-bottom:8px}
+.highlight{background:rgba(124,111,255,0.08);border:1px solid rgba(124,111,255,0.2);border-radius:10px;padding:20px 24px;margin:24px 0}
+.highlight p{margin:0;color:var(--text)}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+.data-table{width:100%;border-collapse:collapse;margin:16px 0 24px}
+.data-table th{text-align:left;padding:10px 14px;font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#555;border-bottom:1px solid var(--border)}
+.data-table td{padding:12px 14px;font-size:0.88rem;color:var(--muted);border-bottom:1px solid var(--border)}
+.data-table tr:last-child td{border-bottom:none}
+footer{text-align:center;padding:32px;border-top:1px solid var(--border);color:var(--muted);font-size:0.8rem}
+</style>
+</head>
+<body>
+<nav>
+  <a href="/" class="logo">NexBot</a>
+  <a href="/" class="back">← Back to Home</a>
+</nav>
+<div class="container">
+  <div class="page-tag">Legal</div>
+  <h1>Privacy Policy</h1>
+  <div class="updated">Last updated: June 2026</div>
+
+  <div class="highlight">
+    <p>💡 <strong>Short version:</strong> We collect only what we need, never sell your data, and you can delete your account anytime.</p>
+  </div>
+
+  <h2>1. Who We Are</h2>
+  <p>NexBot ("we", "us", "our") is an AI-powered customer support chatbot platform. This Privacy Policy explains how we collect, use, and protect your personal information when you use our service at <a href="https://nexchatai.netlify.app">nexchatai.netlify.app</a>.</p>
+
+  <h2>2. Information We Collect</h2>
+  <table class="data-table">
+    <thead><tr><th>Data Type</th><th>What We Collect</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>Account Info</td><td>Name, email, password (hashed)</td><td>To create and manage your account</td></tr>
+      <tr><td>Payment Info</td><td>Payment ID from Razorpay (we don't store card details)</td><td>To verify your subscription</td></tr>
+      <tr><td>Bot Config</td><td>Your bot settings, FAQs, business info</td><td>To power your AI chatbot</td></tr>
+      <tr><td>Chat Leads</td><td>Names and emails captured by your bot</td><td>Stored for you to access in your dashboard</td></tr>
+      <tr><td>Usage Data</td><td>Number of chats, messages, ratings</td><td>To show you analytics</td></tr>
+    </tbody>
+  </table>
+
+  <h2>3. How We Use Your Information</h2>
+  <ul>
+    <li>To provide and improve the NexBot service</li>
+    <li>To process payments and manage subscriptions</li>
+    <li>To send important account and service notifications</li>
+    <li>To provide customer support</li>
+    <li>To analyze usage and improve our platform</li>
+  </ul>
+
+  <h2>4. Data We Never Do</h2>
+  <ul>
+    <li>❌ We never sell your data to third parties</li>
+    <li>❌ We never share your data with advertisers</li>
+    <li>❌ We never store your credit/debit card details</li>
+    <li>❌ We never use your bot conversations for advertising</li>
+  </ul>
+
+  <h2>5. Third-Party Services</h2>
+  <p>We use the following trusted third-party services:</p>
+  <ul>
+    <li><strong>Supabase</strong> — Database and authentication (GDPR compliant)</li>
+    <li><strong>Razorpay</strong> — Payment processing (PCI-DSS compliant)</li>
+    <li><strong>Anthropic Claude API</strong> — AI responses for your chatbot</li>
+    <li><strong>Netlify</strong> — Website hosting</li>
+  </ul>
+
+  <h2>6. Data Security</h2>
+  <p>We take data security seriously. Your data is protected by:</p>
+  <ul>
+    <li>Encrypted connections (HTTPS/SSL) on all pages</li>
+    <li>Passwords are hashed and never stored in plain text</li>
+    <li>Row-level security on our database</li>
+    <li>Regular security audits</li>
+  </ul>
+
+  <h2>7. Your Rights</h2>
+  <p>You have the right to:</p>
+  <ul>
+    <li><strong>Access</strong> — Request a copy of your personal data</li>
+    <li><strong>Correct</strong> — Update incorrect information in your account</li>
+    <li><strong>Delete</strong> — Request deletion of your account and all data</li>
+    <li><strong>Export</strong> — Download your leads and bot data anytime</li>
+  </ul>
+
+  <h2>8. Cookies</h2>
+  <p>We use minimal cookies only for keeping you logged in (session cookies). We do not use tracking or advertising cookies.</p>
+
+  <h2>9. Children's Privacy</h2>
+  <p>NexBot is not intended for users under 18 years of age. We do not knowingly collect personal information from children.</p>
+
+  <h2>10. Changes to This Policy</h2>
+  <p>We may update this Privacy Policy from time to time. We will notify you of significant changes via email. Continued use of NexBot after changes means you accept the updated policy.</p>
+
+  <h2>11. Contact Us</h2>
+  <p>For any privacy concerns or data requests, contact us at <a href="mailto:support@nexchatai.netlify.app">support@nexchatai.netlify.app</a>. We respond within 48 hours.</p>
+</div>
+<footer>© 2026 NexBot. All rights reserved. &nbsp;·&nbsp; <a href="/refund" style="color:var(--accent)">Refund Policy</a> &nbsp;·&nbsp; <a href="/terms" style="color:var(--accent)">Terms</a> &nbsp;·&nbsp; <a href="/privacy" style="color:var(--accent)">Privacy</a></footer>
+</body>
+</html>

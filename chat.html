@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>NexBot Chat</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',sans-serif;height:100vh;display:flex;flex-direction:column;overflow:hidden;background:#f7f7f7}
+
+/* HEADER */
+.chat-header{padding:14px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.header-left{display:flex;align-items:center;gap:10px}
+.bot-avatar{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1rem;color:#fff;overflow:hidden;flex-shrink:0}
+.bot-avatar img{width:100%;height:100%;object-fit:cover}
+.bot-name{font-weight:700;font-size:0.95rem}
+.bot-status{font-size:0.72rem;color:#22c55e;display:flex;align-items:center;gap:4px}
+.bot-status::before{content:'';width:6px;height:6px;background:#22c55e;border-radius:50%;display:inline-block}
+.header-right{display:flex;gap:6px}
+.icon-btn{background:none;border:none;cursor:pointer;padding:5px;border-radius:6px;opacity:0.6;transition:opacity 0.2s}
+.icon-btn:hover{opacity:1}
+.icon-btn svg{width:18px;height:18px}
+
+/* LEAD FORM */
+.lead-form{padding:20px;background:#fff;flex:1;display:flex;flex-direction:column;justify-content:center}
+.lead-title{font-size:1rem;font-weight:700;margin-bottom:6px}
+.lead-sub{font-size:0.82rem;color:#888;margin-bottom:18px;line-height:1.5}
+.lead-input{width:100%;border:1.5px solid #e8e8e8;border-radius:8px;padding:10px 12px;font-family:inherit;font-size:0.88rem;margin-bottom:10px;transition:border-color 0.2s;outline:none}
+.lead-input:focus{border-color:#7c6fff}
+.lead-btn{width:100%;padding:11px;border:none;border-radius:8px;font-family:inherit;font-size:0.9rem;font-weight:700;cursor:pointer;color:#fff;transition:opacity 0.2s}
+.lead-btn:hover{opacity:0.88}
+
+/* MESSAGES */
+.messages{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;background:#f7f7f7}
+.msg-wrap{display:flex;flex-direction:column}
+.msg-wrap.user{align-items:flex-end}
+.msg{max-width:80%;padding:10px 14px;border-radius:14px;font-size:0.86rem;line-height:1.55;word-wrap:break-word}
+.msg.bot{background:#fff;border:1px solid #eee;border-bottom-left-radius:3px}
+.msg.user{color:#fff;border-bottom-right-radius:3px}
+.msg-time{font-size:0.65rem;color:#bbb;margin-top:3px;padding:0 2px}
+
+/* QUICK REPLIES */
+.quick-replies{display:flex;flex-wrap:wrap;gap:6px;padding:6px 14px 10px;background:#f7f7f7}
+.qr-btn{padding:6px 12px;border-radius:20px;border:1.5px solid;background:transparent;font-family:inherit;font-size:0.76rem;font-weight:500;cursor:pointer;transition:all 0.15s;white-space:nowrap}
+
+/* INPUT */
+.input-area{padding:10px 12px;background:#fff;border-top:1px solid #eee;flex-shrink:0}
+.input-row{display:flex;gap:8px;align-items:center}
+.chat-input{flex:1;border:1.5px solid #e8e8e8;border-radius:22px;padding:9px 14px;font-family:inherit;font-size:0.86rem;outline:none;transition:border-color 0.2s;background:#f9f9f9}
+.chat-input:focus{border-color:#7c6fff;background:#fff}
+.send-btn{width:36px;height:36px;border:none;border-radius:50%;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:opacity 0.2s}
+.send-btn:hover{opacity:0.85}
+.send-btn:disabled{opacity:0.4;cursor:not-allowed}
+
+/* RATING */
+.rating-bar{padding:8px 14px;background:#fff;border-top:1px solid #eee;text-align:center;flex-shrink:0}
+.rating-label{font-size:0.72rem;color:#aaa;margin-bottom:5px}
+.stars{display:flex;justify-content:center;gap:5px}
+.star{font-size:1.2rem;cursor:pointer;opacity:0.25;transition:opacity 0.15s}
+.star.active{opacity:1}
+
+/* TYPING */
+.typing{display:flex;gap:4px;align-items:center;padding:10px 14px;background:#fff;border:1px solid #eee;border-radius:14px;border-bottom-left-radius:3px;width:fit-content}
+.typing span{width:6px;height:6px;background:#ccc;border-radius:50%;animation:bounce 1.2s infinite}
+.typing span:nth-child(2){animation-delay:0.2s}
+.typing span:nth-child(3){animation-delay:0.4s}
+@keyframes bounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}
+
+/* DARK MODE */
+body.dark{background:#0f0f13}
+body.dark .chat-header{background:#18181f}
+body.dark .bot-name{color:#f0f0f5}
+body.dark .messages{background:#0f0f13}
+body.dark .msg.bot{background:#18181f;border-color:#2a2a35;color:#f0f0f5}
+body.dark .quick-replies{background:#0f0f13}
+body.dark .input-area{background:#18181f;border-top-color:#2a2a35}
+body.dark .chat-input{background:#0f0f13;border-color:#2a2a35;color:#f0f0f5}
+body.dark .rating-bar{background:#18181f;border-top-color:#2a2a35}
+body.dark .lead-form{background:#18181f}
+body.dark .lead-title{color:#f0f0f5}
+body.dark .lead-input{background:#0f0f13;border-color:#2a2a35;color:#f0f0f5}
+
+.powered{text-align:center;font-size:0.65rem;color:#ccc;padding:4px;background:#fff;flex-shrink:0}
+.powered a{color:#7c6fff;text-decoration:none}
+body.dark .powered{background:#18181f;color:#555}
+</style>
+</head>
+<body>
+
+<div class="chat-header" id="chat-header">
+  <div class="header-left">
+    <div class="bot-avatar" id="bot-avatar">A</div>
+    <div>
+      <div class="bot-name" id="bot-name">Support Bot</div>
+      <div class="bot-status">Online</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <button class="icon-btn" onclick="toggleDark()" title="Toggle dark mode">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </button>
+    <button class="icon-btn" onclick="closeWidget()" title="Close">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+</div>
+
+<div id="lead-form-area" class="lead-form" style="display:none">
+  <div class="lead-title" id="lead-title">👋 Welcome!</div>
+  <div class="lead-sub">Please share your details to start chatting.</div>
+  <input class="lead-input" id="lead-name" type="text" placeholder="Your Name"/>
+  <input class="lead-input" id="lead-email" type="email" placeholder="Your Email"/>
+  <button class="lead-btn" id="lead-btn" onclick="submitLead()">Start Chat →</button>
+</div>
+
+<div class="messages" id="messages" style="display:none"></div>
+<div class="quick-replies" id="quick-replies" style="display:none"></div>
+
+<div class="input-area" id="input-area" style="display:none">
+  <div class="input-row">
+    <input class="chat-input" id="chat-input" placeholder="Type a message..." onkeydown="if(event.key==='Enter')sendMsg()"/>
+    <button class="send-btn" id="send-btn" onclick="sendMsg()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z"/></svg>
+    </button>
+  </div>
+</div>
+
+<div class="rating-bar" id="rating-bar" style="display:none">
+  <div class="rating-label">Rate this chat</div>
+  <div class="stars">
+    <span class="star" onclick="rate(1)">★</span>
+    <span class="star" onclick="rate(2)">★</span>
+    <span class="star" onclick="rate(3)">★</span>
+    <span class="star" onclick="rate(4)">★</span>
+    <span class="star" onclick="rate(5)">★</span>
+  </div>
+</div>
+
+<div class="powered"><a href="https://nexchatai.netlify.app" target="_blank">Powered by NexBot ⚡</a></div>
+
+<script>
+const SUPABASE_URL = 'https://vzfrpjskttlygmxuptek.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_9KaYFTVWVjrPNvRISw5s1g_P9yhVz0N';
+const { createClient } = supabase;
+const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// Get bot ID from URL
+const params = new URLSearchParams(window.location.search);
+const botId = params.get('bot');
+
+let botConfig = null;
+let chatHistory = [];
+let leadData = null;
+let isDark = false;
+
+async function init() {
+  if (!botId) { showError('No bot ID provided'); return; }
+
+  // Load bot config from Supabase
+  const { data, error } = await sb.from('bots').select('*').eq('id', botId).single();
+
+  if (error || !data) {
+    // Fallback default config for testing
+    botConfig = {
+      name: 'Support Bot',
+      company: 'Our Company',
+      color: '#7c6fff',
+      tone: 'friendly',
+      biz_desc: 'We are a helpful business.',
+      faqs: '',
+      quick_replies: 'Help,Contact Us,Pricing',
+      languages: 'English',
+      avatar_url: ''
+    };
+  } else {
+    botConfig = data;
+  }
+
+  applyConfig();
+}
+
+function applyConfig() {
+  const color = botConfig.color || '#7c6fff';
+  const name = botConfig.name || 'Support Bot';
+  const company = botConfig.company || 'Our Company';
+
+  // Apply header color
+  document.getElementById('chat-header').style.background = color + '18';
+  document.getElementById('chat-header').style.borderBottom = '2px solid ' + color + '33';
+
+  // Avatar
+  const avatar = document.getElementById('bot-avatar');
+  avatar.style.background = color;
+  if (botConfig.avatar_url) {
+    avatar.innerHTML = `<img src="${botConfig.avatar_url}" alt="bot"/>`;
+  } else {
+    avatar.textContent = name[0].toUpperCase();
+  }
+
+  // Name
+  document.getElementById('bot-name').textContent = name;
+
+  // Send button color
+  document.getElementById('send-btn').style.background = color;
+
+  // Lead form
+  document.getElementById('lead-title').textContent = `👋 Welcome to ${company}!`;
+  document.getElementById('lead-btn').style.background = color;
+
+  // Quick replies
+  const qrContainer = document.getElementById('quick-replies');
+  const qrs = (botConfig.quick_replies || '').split(',').map(s => s.trim()).filter(Boolean);
+  qrs.forEach(qr => {
+    const btn = document.createElement('button');
+    btn.className = 'qr-btn';
+    btn.style.borderColor = color;
+    btn.style.color = color;
+    btn.textContent = qr;
+    btn.onclick = () => { document.getElementById('chat-input').value = qr; sendMsg(); };
+    qrContainer.appendChild(btn);
+  });
+
+  // Show lead form or chat directly
+  if (botConfig.lead_capture !== false) {
+    document.getElementById('lead-form-area').style.display = 'flex';
+  } else {
+    startChat();
+  }
+}
+
+function submitLead() {
+  const name = document.getElementById('lead-name').value.trim();
+  const email = document.getElementById('lead-email').value.trim();
+  if (!name || !email) { alert('Please enter your name and email'); return; }
+  leadData = { name, email };
+
+  // Save lead to Supabase
+  sb.from('leads').insert({
+    bot_id: botId,
+    name, email,
+    created_at: new Date().toISOString()
+  });
+
+  document.getElementById('lead-form-area').style.display = 'none';
+  startChat(name);
+}
+
+function startChat(userName) {
+  const name = userName || 'there';
+  document.getElementById('messages').style.display = 'flex';
+  document.getElementById('quick-replies').style.display = 'flex';
+  document.getElementById('input-area').style.display = 'block';
+  document.getElementById('rating-bar').style.display = 'block';
+  addBotMsg(`Hi ${name}! 👋 I'm ${botConfig.name}, your support assistant at ${botConfig.company}. How can I help you today?`);
+}
+
+async function sendMsg() {
+  const input = document.getElementById('chat-input');
+  const msg = input.value.trim();
+  if (!msg) return;
+
+  input.value = '';
+  addUserMsg(msg);
+  chatHistory.push({ role: 'user', content: msg });
+  document.getElementById('send-btn').disabled = true;
+
+  // Typing indicator
+  const messagesEl = document.getElementById('messages');
+  const typing = document.createElement('div');
+  typing.className = 'msg-wrap';
+  typing.id = 'typing';
+  typing.innerHTML = '<div class="typing"><span></span><span></span><span></span></div>';
+  messagesEl.appendChild(typing);
+  messagesEl.scrollTop = messagesEl.scrollHeight;
+
+  const system = `You are ${botConfig.name}, a ${botConfig.tone || 'friendly'} AI support assistant for ${botConfig.company}.
+About the business: ${botConfig.biz_desc || ''}
+FAQs: ${botConfig.faqs || ''}
+Languages: ${botConfig.languages || 'English'}. Reply in the same language the user writes in.
+Keep replies short, helpful and friendly. Never make up facts.`;
+
+  try {
+    // Call Netlify Function (keeps API key secret)
+    const res = await fetch('/.netlify/functions/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        messages: chatHistory,
+        system
+      })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Error');
+    const reply = data.reply;
+    chatHistory.push({ role: 'assistant', content: reply });
+    document.getElementById('typing')?.remove();
+    addBotMsg(reply);
+  } catch(err) {
+    document.getElementById('typing')?.remove();
+    addBotMsg('Sorry, something went wrong. Please try again.');
+  }
+
+  document.getElementById('send-btn').disabled = false;
+}
+
+function addBotMsg(text) {
+  const el = document.getElementById('messages');
+  const wrap = document.createElement('div');
+  wrap.className = 'msg-wrap';
+  wrap.innerHTML = `<div class="msg bot">${escHtml(text)}</div><div class="msg-time">${formatTime()}</div>`;
+  el.appendChild(wrap);
+  el.scrollTop = el.scrollHeight;
+}
+
+function addUserMsg(text) {
+  const el = document.getElementById('messages');
+  const color = botConfig?.color || '#7c6fff';
+  const wrap = document.createElement('div');
+  wrap.className = 'msg-wrap user';
+  wrap.innerHTML = `<div class="msg user" style="background:${color}">${escHtml(text)}</div><div class="msg-time">${formatTime()}</div>`;
+  el.appendChild(wrap);
+  el.scrollTop = el.scrollHeight;
+}
+
+function rate(val) {
+  document.querySelectorAll('.star').forEach((s,i) => s.classList.toggle('active', i < val));
+  // Save rating to Supabase
+  sb.from('leads').update({ rating: val }).eq('bot_id', botId).eq('email', leadData?.email || '');
+}
+
+function toggleDark() {
+  isDark = !isDark;
+  document.body.classList.toggle('dark', isDark);
+}
+
+function closeWidget() {
+  window.parent.postMessage('nexbot-close', '*');
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function formatTime() {
+  return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+}
+
+function showError(msg) {
+  document.body.innerHTML = `<div style="padding:20px;text-align:center;color:#888;font-size:0.9rem">${msg}</div>`;
+}
+
+init();
+</script>
+</body>
+</html>
